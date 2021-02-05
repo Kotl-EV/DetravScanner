@@ -69,7 +69,7 @@ public class ProspectingPacket extends DetravPacket {
                 }
             } else if (packet.ptype == 2) {
                 // Fluid
-                rgba = fluidColors.get((int) meta); 
+                rgba = fluidColors.get((int) meta);
                 if (rgba == null) {
                     DetravScannerMod.proxy.sendPlayerExeption( "Unknown fluid ID = " + meta + " Please add to FluidColors.java!");
                     rgba = new short[]{125,123,118,0};
