@@ -2,8 +2,7 @@ package com.detrav.items.behaviours;
 
 import com.detrav.items.DetravMetaGeneratedTool01;
 import com.detrav.net.DetravNetwork;
-import com.detrav.net.DetravProPickPacket00;
-import cpw.mods.fml.common.Loader;
+import com.detrav.net.ProspectingPacket;
 import gregtech.api.items.GT_MetaBase_Item;
 import gregtech.api.objects.ItemData;
 import gregtech.api.util.GT_LanguageManager;
@@ -18,6 +17,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.fluids.FluidStack;
@@ -28,9 +28,9 @@ import java.util.List;
 /**
  * Created by wital_000 on 19.03.2016.
  */
-public class BehaviourDetravToolElectricProPick extends BehaviourDetravToolProPick {
+public class BehaviourDetravToolElectricProspector extends BehaviourDetravToolProPick {
 
-    public BehaviourDetravToolElectricProPick(int aCosts) {
+    public BehaviourDetravToolElectricProspector(int aCosts) {
         super(aCosts);
     }
 
@@ -61,51 +61,40 @@ public class BehaviourDetravToolElectricProPick extends BehaviourDetravToolProPi
                 return super.onItemRightClick(aItem, aStack, aWorld, aPlayer);
             }
 
-            //aPlayer.openGui();
-            DetravMetaGeneratedTool01 tool = (DetravMetaGeneratedTool01) aItem;
-            //aWorld.getChunkFromBlockCoords()
-            int cX = ((int) aPlayer.posX) >> 4;
-            int cZ = ((int) aPlayer.posZ) >> 4;
+            final DetravMetaGeneratedTool01 tool = (DetravMetaGeneratedTool01) aItem;
+            final int cX = ((int) aPlayer.posX) >> 4;
+            final int cZ = ((int) aPlayer.posZ) >> 4;
             int size = aItem.getHarvestLevel(aStack, "") + 1;
-            List<Chunk> chunks = new ArrayList<Chunk>();
-            //aPlayer.addChatMessage(new ChatComponentText("Scanning Begin, wait!"));
-            //DetravProPickPacket00 packet = new DetravProPickPacket00();
+            final List<Chunk> chunks = new ArrayList<>();
+            aPlayer.addChatMessage(new ChatComponentText("Scanning..."));
             for (int i = -size; i <= size; i++)
                 for (int j = -size; j <= size; j++)
                     if (i != -size && i != size && j != -size && j != size)
                         chunks.add(aWorld.getChunkFromChunkCoords(cX + i, cZ + j));
             size = size - 1;
-            //c.gene
-            DetravProPickPacket00 packet = new DetravProPickPacket00();
-            packet.ptype = (int) data;
-            packet.chunkX = cX;
-            packet.chunkZ = cZ;
-            packet.size = size;
+            final ProspectingPacket packet = new ProspectingPacket(cX, cZ, (int) aPlayer.posX, (int) aPlayer.posZ, size, data);
+            final String small_ore_keyword = StatCollector.translateToLocal("detrav.scanner.small_ore.keyword");
             for (Chunk c : chunks) {
                 for (int x = 0; x < 16; x++)
                     for (int z = 0; z < 16; z++) {
-                        int ySize = c.getHeightValue(x, z);//(int)aPlayer.posY;//c.getHeightValue(x, z);
+                        final int ySize = c.getHeightValue(x, z);
                         for (int y = 1; y < ySize; y++) {
                             switch (data) {
                                 case 0:
                                 case 1:
-                                    Block tBlock = c.getBlock(x, y, z);
+                                    final Block tBlock = c.getBlock(x, y, z);
                                     short tMetaID = (short) c.getBlockMetadata(x, y, z);
                                     if (tBlock instanceof GT_Block_Ores_Abstract) {
                                         TileEntity tTileEntity = c.getTileEntityUnsafe(x, y, z);
-                                        if ((tTileEntity != null)
-                                                && (tTileEntity instanceof GT_TileEntity_Ores)
-                                                && ((GT_TileEntity_Ores) tTileEntity).mNatural == true) {
+                                        if ((tTileEntity instanceof GT_TileEntity_Ores) && ((GT_TileEntity_Ores) tTileEntity).mNatural) {
                                             tMetaID = (short) ((GT_TileEntity_Ores) tTileEntity).getMetaData();
                                             try {
-
-                                                String name = GT_LanguageManager.getTranslation(
-                                                        tBlock.getUnlocalizedName() + "." + tMetaID + ".name");
-                                                if (name.startsWith("Small")) if (data != 1) continue;
+                                                String name = GT_LanguageManager.getTranslation(tBlock.getUnlocalizedName() + "." + tMetaID + ".name");
+                                                if (data != 1 && name.startsWith(small_ore_keyword)) continue;
                                                 packet.addBlock(c.xPosition * 16 + x, y, c.zPosition * 16 + z, tMetaID);
                                             } catch (Exception e) {
                                                 String name = tBlock.getUnlocalizedName() + ".";
-                                                if (name.contains(".small.")) if (data != 1) continue;
+                                                if (data != 1 && name.contains(".small.")) continue;
                                                 packet.addBlock(c.xPosition * 16 + x, y, c.zPosition * 16 + z, tMetaID);
                                             }
                                         }
@@ -122,8 +111,8 @@ public class BehaviourDetravToolElectricProPick extends BehaviourDetravToolProPi
                                     }
                                     FluidStack fStack = GT_UndergroundOil.undergroundOil(aWorld.getChunkFromBlockCoords(c.xPosition * 16 + x, c.zPosition * 16 + z), -1);
                                     if (fStack.amount > 0) {
-                                        packet.addBlock(c.xPosition * 16 + x, 2, c.zPosition * 16 + z, (short) fStack.amount);
                                         packet.addBlock(c.xPosition * 16 + x, 1, c.zPosition * 16 + z, (short) fStack.getFluidID());
+                                        packet.addBlock(c.xPosition * 16 + x, 2, c.zPosition * 16 + z, (short) fStack.amount);
                                     }
                                     break;
                                 case 3:
@@ -172,14 +161,11 @@ public class BehaviourDetravToolElectricProPick extends BehaviourDetravToolProPi
                 return true;
             }
             else {
-                //if (aWorld.getBlock(aX, aY, aZ).getMaterial() == Material.rock || aWorld.getBlock(aX, aY, aZ) == GregTech_API.sBlockOres1) {
                 if (!aWorld.isRemote) {
                     prospectSingleChunk( (DetravMetaGeneratedTool01) aItem, aStack, aPlayer, aWorld, aX, aY, aZ );
                 }
                 return true;
             }
-            //}
-            //return false;
         }
         if (data < 3)
             if (!aWorld.isRemote) {

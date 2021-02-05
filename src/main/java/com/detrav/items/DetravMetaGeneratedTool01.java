@@ -3,7 +3,7 @@ package com.detrav.items;
 import java.util.List;
 
 import com.detrav.DetravScannerMod;
-import com.detrav.items.tools.DetravToolElectricProPick;
+import com.detrav.items.tools.DetravToolElectricProspector;
 import gregtech.api.enums.GT_Values;
 import gregtech.api.enums.Materials;
 import gregtech.api.interfaces.IToolStats;
@@ -14,9 +14,9 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.StatCollector;
 import net.minecraftforge.fluids.FluidStack;
 
-import static com.detrav.DetravScannerMod.DEBUGBUILD;
 
 /**
  * Created by wital_000 on 19.03.2016.
@@ -27,38 +27,47 @@ public class DetravMetaGeneratedTool01 extends GT_MetaGenerated_Tool {
     public DetravMetaGeneratedTool01() {
         super("detrav.metatool.01");
         INSTANCE = this;
-        addTool(100, "Electric Prospector's Scanner (LuV)", "", new DetravToolElectricProPick(6));
-        addTool(102, "Electric Prospector's Scanner (ZPM)", "", new DetravToolElectricProPick(7));
-        addTool(104, "Electric Prospector's Scanner (UV)", "", new DetravToolElectricProPick(8));
-        addTool(106, "Electric Prospector's Scanner (UHV)", "", new DetravToolElectricProPick(9));
+        addTool(100, "Electric Prospector's Scanner (LuV)", "", new DetravToolElectricProspector(6));
+        addTool(102, "Electric Prospector's Scanner (ZPM)", "", new DetravToolElectricProspector(7));
+        addTool(104, "Electric Prospector's Scanner (UV)", "", new DetravToolElectricProspector(8));
+        addTool(106, "Electric Prospector's Scanner (UHV)", "", new DetravToolElectricProspector(9));
         setCreativeTab(DetravScannerMod.TAB_DETRAV);
     }
+
     @SuppressWarnings("unchecked")
     public void addAdditionalToolTips(List aList, ItemStack aStack, EntityPlayer aPlayer) {
-        //getElectricStats()
-        //super.addAdditionalToolTips();
         long tMaxDamage = getToolMaxDamage(aStack);
         Materials tMaterial = getPrimaryMaterial(aStack);
         IToolStats tStats = getToolStats(aStack);
-        int tOffset = aList.size(); 
-		//getElectricStats(aStack) != null ? 2 : 1;
-        if (tStats != null) {
-            String name = aStack.getUnlocalizedName();
-            String num = name.substring("gt.detrav.metatool.01.".length());
-            int meta = Integer.parseInt(num);
-            int range = getHarvestLevel(aStack, "")/2+(meta/4);
-            if ((range % 2) == 0 ) {
-                range += 1;
-            }
-            if (meta >=100 && meta<200) {
-                    aList.add(tOffset + 0, EnumChatFormatting.WHITE + "Durability: " + EnumChatFormatting.GREEN + (tMaxDamage - getToolDamage(aStack)) + " / " + tMaxDamage + EnumChatFormatting.GRAY);
-                    aList.add(tOffset + 1, EnumChatFormatting.WHITE + tMaterial.mDefaultLocalName + EnumChatFormatting.GRAY);
-                    aList.add(tOffset + 2, EnumChatFormatting.WHITE + "Chunks: " + EnumChatFormatting.YELLOW + (getHarvestLevel(aStack, "") * 2 + 1) + "x" + (getHarvestLevel(aStack, "") * 2 + 1) + EnumChatFormatting.GRAY);
-                    aList.add(tOffset + 3, EnumChatFormatting.ITALIC+ "Right click on rock for prospecting current chunk!");
-                    aList.add(tOffset + 4, EnumChatFormatting.ITALIC+ "Right click on bedrock for prospecting oil!");
-                    aList.add(tOffset + 5, EnumChatFormatting.ITALIC+ "Right click for scanning!");
-            }
+        int tOffset = aList.size();
+        if (tStats == null) return;
+
+        String name = aStack.getUnlocalizedName();
+        String num = name.substring("gt.detrav.metatool.01.".length());
+        int meta = Integer.parseInt(num);
+        int range = getHarvestLevel(aStack, "")/2+(meta/4);
+        if ((range % 2) == 0 ) {
+            range += 1;
         }
+        if (meta<100) {
+            aList.add(tOffset + 0, EnumChatFormatting.WHITE + StatCollector.translateToLocal("tooltip.detrav.scanner.durability") + EnumChatFormatting.GREEN + Long.toString(tMaxDamage - getToolDamage(aStack)) + " / " + Long.toString(tMaxDamage) + EnumChatFormatting.GRAY);
+            aList.add(tOffset + 1, EnumChatFormatting.WHITE + tMaterial.getLocalizedNameForItem("%material") + EnumChatFormatting.GRAY);
+            aList.add(tOffset + 2, EnumChatFormatting.WHITE + StatCollector.translateToLocal("tooltip.detrav.scanner.range") + Integer.toString(range) + "x"+ Integer.toString(range) + EnumChatFormatting.GRAY);
+            aList.add(tOffset + 3, EnumChatFormatting.ITALIC+ StatCollector.translateToLocal("tooltip.detrav.scanner.usage.0") + EnumChatFormatting.GRAY);
+            aList.add(tOffset + 4, EnumChatFormatting.ITALIC+ StatCollector.translateToLocal("tooltip.detrav.scanner.usage.1") + EnumChatFormatting.GRAY);
+            aList.add(tOffset + 5, EnumChatFormatting.ITALIC+ StatCollector.translateToLocal("tooltip.detrav.scanner.success.chance")+EnumChatFormatting.RESET+Integer.toString(((((1+meta)*8) <= 100)? ((1+meta)*8) : 100))+EnumChatFormatting.GRAY+"%");
+            aList.add(tOffset + 6, EnumChatFormatting.ITALIC+ StatCollector.translateToLocal("tooltip.detrav.scanner.distance.0"));
+            aList.add(tOffset + 7, EnumChatFormatting.ITALIC+ StatCollector.translateToLocal("tooltip.detrav.scanner.distance.1"));
+
+        } else if (meta >=100 && meta<200) {
+            aList.add(tOffset + 0, EnumChatFormatting.WHITE + StatCollector.translateToLocal("tooltip.detrav.scanner.durability") + EnumChatFormatting.GREEN + (tMaxDamage - getToolDamage(aStack)) + " / " + tMaxDamage + EnumChatFormatting.GRAY);
+            aList.add(tOffset + 1, EnumChatFormatting.WHITE + tMaterial.getLocalizedNameForItem("%material") + EnumChatFormatting.GRAY);
+            aList.add(tOffset + 2, EnumChatFormatting.WHITE + StatCollector.translateToLocal("tooltip.detrav.scanner.range") + EnumChatFormatting.YELLOW + (getHarvestLevel(aStack, "") * 2 + 1) + "x" + (getHarvestLevel(aStack, "") * 2 + 1) + EnumChatFormatting.GRAY);
+            aList.add(tOffset + 3, EnumChatFormatting.ITALIC+ StatCollector.translateToLocal("tooltip.detrav.scanner.usage.0"));
+            aList.add(tOffset + 4, EnumChatFormatting.ITALIC+ StatCollector.translateToLocal("tooltip.detrav.scanner.usage.1"));
+            aList.add(tOffset + 5, EnumChatFormatting.ITALIC+ StatCollector.translateToLocal("tooltip.detrav.scanner.usage.2"));
+        }
+
     }
 
     public Long getElectricStatsLoss(ItemStack aStack) {
@@ -109,117 +118,7 @@ public class DetravMetaGeneratedTool01 extends GT_MetaGenerated_Tool {
         }
         return false;
     }
-
-    public void setLevelToItemStack(ItemStack aStack, int level, float percent)
-    {
-        if(aStack == null) return;
-        NBTTagCompound aNBT = aStack.getTagCompound();
-        if(aNBT == null) {
-            aNBT = new NBTTagCompound();
-            NBTTagCompound detravLevel = new NBTTagCompound();
-            aNBT.setTag("DetravLevel", detravLevel);
-            aStack.setTagCompound(aNBT);
-        }
-        {
-            NBTTagCompound detravLevel = aNBT.getCompoundTag("DetravLevel");
-            if (detravLevel == null || hasnolevel(detravLevel)) {
-                detravLevel = new NBTTagCompound();
-                aNBT.setTag("DetravLevel", detravLevel);
-            }
-            detravLevel.setFloat("level"+Integer.toString(level),percent);
-        }
-    }
-
-
-    private boolean hasnolevel(NBTTagCompound detravLevel)
-    {
-        for(int i=0;i<9;i++)
-        {
-            if(detravLevel.hasKey("level"+Integer.toString(i)))
-              return false;
-        }
-        return true;
-    }
-
-    public float getLevel(ItemStack aStack, int level)
-    {
-        if(aStack == null) return 0;
-        NBTTagCompound aNBT = aStack.getTagCompound();
-        if(aNBT ==null) return 0;
-        NBTTagCompound detravLevel = aNBT.getCompoundTag("DetravLevel");
-        if(detravLevel == null) return 0;
-        return detravLevel.getFloat("level"+Integer.toString(level));
-    }
-
-    public boolean setItemStackToDetravData(ItemStack aStack, ItemStack what)
-    {
-        if(aStack == null) return false;
-        NBTTagCompound aNBT = aStack.getTagCompound();
-        if(aNBT == null) {
-            aNBT = new NBTTagCompound();
-            NBTTagCompound detravData = new NBTTagCompound();
-            aNBT.setTag("DetravData", detravData);
-            aStack.setTagCompound(aNBT);
-        }
-        {
-            NBTTagCompound detravData = aNBT.getCompoundTag("DetravData");
-            if (detravData == null || detravData.getShort("id") == 0) {
-                detravData = new NBTTagCompound();
-                aNBT.setTag("DetravData", detravData);
-            }
-            if (what == null)
-                aNBT.removeTag("DetravData");
-            else
-                what.writeToNBT(detravData);
-            return true;
-        }
-    }
-
-    public ItemStack getItemStackFromDetravData(ItemStack aStack)
-    {
-        if(aStack == null) return null;
-        NBTTagCompound aNBT = aStack.getTagCompound();
-        if(aNBT ==null) return null;
-        NBTTagCompound detravData = aNBT.getCompoundTag("DetravData");
-        if(detravData == null) return null;
-        return ItemStack.loadItemStackFromNBT(detravData);
-    }
-
-
-    public boolean setFluidStackToDetravData(ItemStack aStack, FluidStack what)
-    {
-        if(aStack == null) return false;
-        NBTTagCompound aNBT = aStack.getTagCompound();
-        if(aNBT == null) {
-            aNBT = new NBTTagCompound();
-            NBTTagCompound detravData = new NBTTagCompound();
-            aNBT.setTag("DetravData", detravData);
-            aStack.setTagCompound(aNBT);
-        }
-        {
-            NBTTagCompound detravData = aNBT.getCompoundTag("DetravData");
-            if (detravData == null || detravData.getShort("id") == 0) {
-                detravData = new NBTTagCompound();
-                aNBT.setTag("DetravData", detravData);
-            }
-            if (what == null)
-                aNBT.removeTag("DetravData");
-            else
-                what.writeToNBT(detravData);
-            return true;
-        }
-    }
-
-    public FluidStack getFluidStackFromDetravData(ItemStack aStack)
-    {
-        if(aStack == null) return null;
-        NBTTagCompound aNBT = aStack.getTagCompound();
-        if(aNBT ==null) return null;
-        NBTTagCompound detravData = aNBT.getCompoundTag("DetravData");
-        if(detravData == null) return null;
-        return FluidStack.loadFluidStackFromNBT(detravData);
-    }
-
+    
     //SubItems TODO
     @SuppressWarnings("unchecked")
     public void getDetravSubItems(Item item, CreativeTabs detravCreativeTab, List list) {
@@ -231,7 +130,7 @@ public class DetravMetaGeneratedTool01 extends GT_MetaGenerated_Tool {
         dStack = getToolWithStats(102, 1, Materials.Neutronium, Materials.TungstenSteel, new long[]{409600000L, GT_Values.V[7], 7L, -1L});
         setCharge(dStack,409600000L);
         list.add(dStack);
-      //Electric Scanners 
+        //Electric Scanners 
         dStack = getToolWithStats(100, 1, Materials.Iridium, Materials.TungstenSteel, new long[]{102400000L, GT_Values.V[6], 6L, -1L});
         setCharge(dStack,102400000L);
         list.add(dStack);

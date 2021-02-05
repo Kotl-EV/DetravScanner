@@ -22,6 +22,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.fluids.FluidStack;
@@ -187,6 +188,7 @@ public class BehaviourDetravToolProPick extends Behaviour_None {
             }
         }else if (aRandom.nextInt(100) < chance) {
             int data = DetravMetaGeneratedTool01.INSTANCE.getToolGTDetravData(aStack).intValue();
+            final String small_ore_keyword = StatCollector.translateToLocal("detrav.scanner.small_ore.keyword");
             for (int x = 0; x < 16; x++)
                 for (int z = 0; z < 16; z++) {
                     int ySize = aChunk.getHeightValue(x, z);
@@ -196,20 +198,19 @@ public class BehaviourDetravToolProPick extends Behaviour_None {
                         short tMetaID = (short)aChunk.getBlockMetadata(x,y,z);
                         if (tBlock instanceof GT_Block_Ores_Abstract) {
                             TileEntity tTileEntity = aChunk.getTileEntityUnsafe(x,y,z);
-                            if ((tTileEntity!=null)
-                                    && (tTileEntity instanceof GT_TileEntity_Ores)
-                                    && ((GT_TileEntity_Ores) tTileEntity).mNatural == true) {
+                            if ((tTileEntity instanceof GT_TileEntity_Ores)
+                                    && ((GT_TileEntity_Ores) tTileEntity).mNatural) {
                                 tMetaID = (short)((GT_TileEntity_Ores) tTileEntity).getMetaData();
                                 try {
-                                    String name = Materials.getLocalizedNameForItem(
-                                    		GT_LanguageManager.getTranslation(tBlock.getUnlocalizedName() + "." + tMetaID + ".name"), tMetaID%1000);
+                                    String name = Materials.getLocalizedNameForItem(GT_LanguageManager.getTranslation(tBlock.getUnlocalizedName() + "." + tMetaID + ".name"), tMetaID%1000);
+                                    if (data != 1 && name.startsWith(small_ore_keyword)) continue;
                                     if (name.startsWith("Small")) if (data != 1) continue;
                                     if (name.startsWith("Small")) if(data!=1) continue;
                                     addOreToHashMap(name, aPlayer);
                                 }
                                 catch(Exception e) {
                                     String name = tBlock.getUnlocalizedName() + ".";
-                                    if (name.contains(".small.")) if (data != 1) continue;
+                                    if (data != 1 && name.contains(".small."))  continue;
                                     if (name.startsWith("Small")) if(data!=1) continue;
                                     addOreToHashMap(name, aPlayer);
                                 }
@@ -220,19 +221,15 @@ public class BehaviourDetravToolProPick extends Behaviour_None {
                                 try {
                                     try {
                                         tMetaID = (short)tAssotiation.mMaterial.mMaterial.mMetaItemSubID;
-                                        
-                                        String name = Materials.getLocalizedNameForItem(GT_LanguageManager.getTranslation(
-                                                "gt.blockores." + tMetaID + ".name"), tMetaID%1000);
+
+                                        String name = Materials.getLocalizedNameForItem(GT_LanguageManager.getTranslation("gt.blockores." + tMetaID + ".name"), tMetaID%1000);
                                         addOreToHashMap(name, aPlayer);
                                     } catch (Exception e1) {
                                         String name = tAssotiation.toString();
                                         addOreToHashMap(name, aPlayer);
                                     }
                                 }
-                                catch (Exception e)
-                                {
-
-                                }
+                                catch (Exception ignored) { }
                             }
                         }
 
