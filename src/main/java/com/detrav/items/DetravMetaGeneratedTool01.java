@@ -27,10 +27,10 @@ public class DetravMetaGeneratedTool01 extends GT_MetaGenerated_Tool {
     public DetravMetaGeneratedTool01() {
         super("detrav.metatool.01");
         INSTANCE = this;
-        addTool(100, "Electric Prospector's Scanner (LuV)", "", new DetravToolElectricProspector(6));
-        addTool(102, "Electric Prospector's Scanner (ZPM)", "", new DetravToolElectricProspector(7));
-        addTool(104, "Electric Prospector's Scanner (UV)", "", new DetravToolElectricProspector(8));
-        addTool(106, "Electric Prospector's Scanner (UHV)", "", new DetravToolElectricProspector(9));
+        addTool(100, "Electric Prospector's Scanner (EV)", "", new DetravToolElectricProspector(6));
+        addTool(102, "Electric Prospector's Scanner (IV)", "", new DetravToolElectricProspector(7));
+        addTool(104, "Electric Prospector's Scanner (LuV)", "", new DetravToolElectricProspector(8));
+        addTool(106, "Electric Prospector's Scanner (ZPM)", "", new DetravToolElectricProspector(9));
         setCreativeTab(DetravScannerMod.TAB_DETRAV);
     }
 
@@ -124,24 +124,24 @@ public class DetravMetaGeneratedTool01 extends GT_MetaGenerated_Tool {
     public void getDetravSubItems(Item item, CreativeTabs detravCreativeTab, List list) {
         ItemStack dStack;
         //Electric Scanners 
-        dStack = getToolWithStats(100, 1, Materials.Iridium, Materials.TungstenSteel, new long[]{102400000L, GT_Values.V[6], 6L, -1L});
-        setCharge(dStack,102400000L);
+        dStack = getToolWithStats(100, 1, Materials.BT6, Materials.TungstenSteel, new long[]{25000000L, GT_Values.V[6-2], 6L-2, -1L});
+        setCharge(dStack,25000000L);
         list.add(dStack);
-        dStack = getToolWithStats(102, 1, Materials.Neutronium, Materials.TungstenSteel, new long[]{409600000L, GT_Values.V[7], 7L, -1L});
-        setCharge(dStack,409600000L);
+        dStack = getToolWithStats(102, 1, Materials.HastelloyC276, Materials.TungstenSteel, new long[]{250000000L, GT_Values.V[7-2], 7L-2, -1L});
+        setCharge(dStack,250000000L);
         list.add(dStack);
         //Electric Scanners 
-        dStack = getToolWithStats(100, 1, Materials.Iridium, Materials.TungstenSteel, new long[]{102400000L, GT_Values.V[6], 6L, -1L});
-        setCharge(dStack,102400000L);
+        dStack = getToolWithStats(100, 1, Materials.BT6, Materials.TungstenSteel, new long[]{25000000L, GT_Values.V[6-2], 6L-2, -1L});
+        setCharge(dStack,25000000L);
         list.add(dStack);
-        dStack = getToolWithStats(102, 1, Materials.Neutronium, Materials.TungstenSteel, new long[]{409600000L, GT_Values.V[7], 7L, -1L});
-        setCharge(dStack,409600000L);
+        dStack = getToolWithStats(102, 1, Materials.HastelloyC276, Materials.TungstenSteel, new long[]{250000000L, GT_Values.V[7-2], 7L-2, -1L});
+        setCharge(dStack,250000000L);
         list.add(dStack);
-        dStack = getToolWithStats(104, 1, Materials.Phoenixite, Materials.TungstenSteel, new long[]{1638400000L, GT_Values.V[8], 8L, -1L});
-        setCharge(dStack, 1638400000L);
+        dStack = getToolWithStats(104, 1, Materials.HastelloyN, Materials.TungstenSteel, new long[]{1000000000L, GT_Values.V[8-2], 8L-2, -1L});
+        setCharge(dStack, 1000000000L);
         list.add(dStack);
-        dStack = getToolWithStats(106, 1, Materials.Infinity, Materials.TungstenSteel, new long[]{6553600000L, GT_Values.V[9], 9L, -1L});
-        setCharge(dStack, 6553600000L);
+        dStack = getToolWithStats(106, 1, Materials.Lafium, Materials.TungstenSteel, new long[]{10000000000L, GT_Values.V[9-2], 9L-2, -1L});
+        setCharge(dStack, 10000000000L);
         list.add(dStack);
     }
 }

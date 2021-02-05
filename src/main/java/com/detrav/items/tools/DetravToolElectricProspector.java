@@ -19,9 +19,9 @@ public class DetravToolElectricProspector extends DetravToolElectricProspectorBa
     }
     public float getMaxDurabilityMultiplier() {
     	if (tier-6 == 0)
-    		return (float) Math.pow(((float)((tier-6F)*2F)),0.0D);
+    		return (float) Math.pow((((tier-6F)*2F)),0.0D);
     	else
-    		return (float)((tier-6F)*2F);
+    		return ((tier-6F)*2F);
     }
 
     public IIconContainer getIcon(boolean aIsToolHead, ItemStack aStack) {
