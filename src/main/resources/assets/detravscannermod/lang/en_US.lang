@@ -35,6 +35,7 @@ tooltip.detrav.scanner.usage.3=Double click any entry to invert the background c
 tooltip.detrav.scanner.success.chance=Chance of a successful scan:
 tooltip.detrav.scanner.distance.0=next to you (0 chunks away), close to you (1-2)
 tooltip.detrav.scanner.distance.1=at medium range (3-5), at long range (6-8), far away (9+)
+tooltup.detrav.scanner.quantum=Area scan requires full Quantum Armor set equipped
 
 gui.detrav.scanner.pollution=Pollution
 gui.detrav.scanner.unknown_fluid=Unknown Fluid name!
