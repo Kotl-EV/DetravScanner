@@ -13,8 +13,8 @@ public class Detrav_AfterGTPreload_Loader implements Runnable {
         //items
         new DetravMetaGeneratedTool01();
 
-        //recipes and etc
-        new ProcessingDetravToolProspector();
+//        //recipes and etc
+//        new ProcessingDetravToolProspector();
 
     }
 }

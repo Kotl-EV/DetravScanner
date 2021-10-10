@@ -36,9 +36,9 @@ public class DetravCreativeTab extends CreativeTabs {
             for (CreativeTabs tab : item.getCreativeTabs()) {
                 if (tab == this) {
                     item.getSubItems(item, this, p_78018_1_);
-                    if (item instanceof DetravMetaGeneratedTool01) {
-                        ((DetravMetaGeneratedTool01) item).getDetravSubItems(item, this, p_78018_1_);
-                    }
+//                    if (item instanceof DetravMetaGeneratedTool01) {
+//                        ((DetravMetaGeneratedTool01) item).getDetravSubItems(item, this, p_78018_1_);
+//                    }
                 }
             }
         }

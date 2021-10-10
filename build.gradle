@@ -91,6 +91,7 @@ repositories {
 }
 
 dependencies {
+    provided "applecore:AppleCore:${config.applecore.version}:api"
     provided fileTree(dir: 'libs', include: '*.jar')
 }
 

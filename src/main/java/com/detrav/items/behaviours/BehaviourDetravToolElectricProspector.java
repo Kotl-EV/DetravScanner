@@ -3,6 +3,7 @@ package com.detrav.items.behaviours;
 import com.detrav.items.DetravMetaGeneratedTool01;
 import com.detrav.net.DetravNetwork;
 import com.detrav.net.ProspectingPacket;
+import gregtech.api.enums.GT_Values;
 import gregtech.api.items.GT_MetaBase_Item;
 import gregtech.api.objects.ItemData;
 import gregtech.api.util.GT_LanguageManager;
@@ -16,8 +17,10 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
@@ -31,19 +34,25 @@ import java.util.List;
  */
 public class BehaviourDetravToolElectricProspector extends BehaviourDetravToolProPick {
 
-    public BehaviourDetravToolElectricProspector(int aCosts) {
-        super(aCosts);
+    int usage, radius;
+
+    public BehaviourDetravToolElectricProspector(int usage, int radius) {
+        super(0);
+        this.usage = usage;
+        this.radius = radius;
     }
 
-	public ItemStack onItemRightClick(GT_MetaBase_Item aItem, ItemStack aStack, World aWorld, EntityPlayer aPlayer) {
+    public ItemStack onItemRightClick(GT_MetaBase_Item aItem, ItemStack aStack, World aWorld, EntityPlayer aPlayer) {
+//        radius = 5;
         if (aWorld.isRemote) {
             return aStack;
         }
         if (!(aPlayer.isSneaking() || aPlayer.capabilities.isCreativeMode || GT_Utility.isWearingFullQuantumArmor(aPlayer))) {
+            aPlayer.addChatMessage(new ChatComponentText("Quantum Synchronization Failed"));
             return aStack;
         }
-        if (!aWorld.isRemote) {
-            int data = DetravMetaGeneratedTool01.INSTANCE.getToolGTDetravData(aStack).intValue();
+        if (!aWorld.isRemote && canUse(aItem, aStack)) {
+            int data = getMode(aStack);
             if (aPlayer.isSneaking()) {
                 data++;
                 if (data > 3) data = 0;
@@ -64,14 +73,14 @@ public class BehaviourDetravToolElectricProspector extends BehaviourDetravToolPr
                         aPlayer.addChatMessage(new ChatComponentText("Set Mode: ERROR"));
                         break;
                 }
-                DetravMetaGeneratedTool01.INSTANCE.setToolGTDetravData(aStack, (long) data);
+                setMode(aStack, data);
                 return super.onItemRightClick(aItem, aStack, aWorld, aPlayer);
             }
 
-            final DetravMetaGeneratedTool01 tool = (DetravMetaGeneratedTool01) aItem;
+//            final DetravMetaGeneratedTool01 tool = (DetravMetaGeneratedTool01) aItem;
             final int cX = ((int) aPlayer.posX) >> 4;
             final int cZ = ((int) aPlayer.posZ) >> 4;
-            int size = aItem.getHarvestLevel(aStack, "") + 1;
+            int size = radius + 1;
             final List<Chunk> chunks = new ArrayList<>();
             aPlayer.addChatMessage(new ChatComponentText("Scanning..."));
             for (int i = -size; i <= size; i++)
@@ -137,10 +146,9 @@ public class BehaviourDetravToolElectricProspector extends BehaviourDetravToolPr
                         }
                     }
             }
-            packet.level = ((DetravMetaGeneratedTool01) aItem).getHarvestLevel(aStack, "");
+            packet.level = 0;
             DetravNetwork.INSTANCE.sendToPlayer(packet, (EntityPlayerMP) aPlayer);
-            if (!aPlayer.capabilities.isCreativeMode)
-                tool.doDamage(aStack, this.mCosts * chunks.size());
+            use(aItem, aPlayer, aStack);
         }
         return super.onItemRightClick(aItem, aStack, aWorld, aPlayer);
     }
@@ -155,21 +163,19 @@ public class BehaviourDetravToolElectricProspector extends BehaviourDetravToolPr
     }
 
     public boolean onItemUse(GT_MetaBase_Item aItem, ItemStack aStack, EntityPlayer aPlayer, World aWorld, int aX, int aY, int aZ, int aSide, float hitX, float hitY, float hitZ) {
-        long data = DetravMetaGeneratedTool01.INSTANCE.getToolGTDetravData(aStack);
+        long data = getMode(aStack);
         if (data < 2) {
-            if(aWorld.getBlock(aX,aY,aZ) == Blocks.bedrock)
-            {
+            if (aWorld.getBlock(aX, aY, aZ) == Blocks.bedrock) {
                 if (!aWorld.isRemote) {
                     FluidStack fStack = GT_UndergroundOil.undergroundOil(aWorld.getChunkFromBlockCoords(aX, aZ), -1);
-                    addChatMassageByValue(aPlayer,fStack.amount,fStack.getLocalizedName());
-                    if (!aPlayer.capabilities.isCreativeMode)
-                        ((DetravMetaGeneratedTool01)aItem).doDamage(aStack, this.mCosts);
+                    addChatMassageByValue(aPlayer, fStack.amount, fStack.getLocalizedName());
+//                    if (!aPlayer.capabilities.isCreativeMode)
+//                        ((DetravMetaGeneratedTool01)aItem).doDamage(aStack, this.mCosts);
                 }
                 return true;
-            }
-            else {
+            } else {
                 if (!aWorld.isRemote) {
-                    prospectSingleChunk( (DetravMetaGeneratedTool01) aItem, aStack, aPlayer, aWorld, aX, aY, aZ );
+                    prospectSingleChunk(aItem, aStack, aPlayer, aWorld, aX, aY, aZ);
                 }
                 return true;
             }
@@ -178,8 +184,8 @@ public class BehaviourDetravToolElectricProspector extends BehaviourDetravToolPr
             if (!aWorld.isRemote) {
                 FluidStack fStack = GT_UndergroundOil.undergroundOil(aWorld.getChunkFromBlockCoords(aX, aZ), -1);
                 addChatMassageByValue(aPlayer, fStack.amount, fStack.getLocalizedName());
-                if (!aPlayer.capabilities.isCreativeMode)
-                    ((DetravMetaGeneratedTool01) aItem).doDamage(aStack, this.mCosts);
+//                if (!aPlayer.capabilities.isCreativeMode)
+//                    ((DetravMetaGeneratedTool01) aItem).doDamage(aStack, this.mCosts);
                 return true;
             }
         if (!aWorld.isRemote) {
@@ -189,4 +195,26 @@ public class BehaviourDetravToolElectricProspector extends BehaviourDetravToolPr
         return true;
     }
 
+
+
+    boolean canUse(GT_MetaBase_Item item, ItemStack is) {
+        return item.canUse(is, usage);
+    }
+
+    void use(GT_MetaBase_Item item, EntityPlayer player, ItemStack is) {
+        if (!player.capabilities.isCreativeMode) {
+            item.use(is, usage, player);
+        }
+    }
+
+    @Override
+    public List<String> getAdditionalToolTips(GT_MetaBase_Item aItem, List<String> aList, ItemStack aStack) {
+        aList.add("Uses " + usage + " per scan");
+        aList.add("Scan area: " + EnumChatFormatting.YELLOW + (radius * 2 + 1) + "x" + (radius * 2 + 1) + EnumChatFormatting.GRAY + " chunks");
+        aList.add("Shift rightclick air to change mode");
+        aList.add("Available modes: GT-Ores, GT-Ores with small, Underbedrock Fluids, GT-Pollution");
+        aList.add("Right click block to prospect current chunk");
+        aList.add("Right click air to prospect current area (Requires Quantum Set)");
+        return super.getAdditionalToolTips(aItem, aList, aStack);
+    }
 }

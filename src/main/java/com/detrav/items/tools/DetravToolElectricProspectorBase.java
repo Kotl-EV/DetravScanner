@@ -169,7 +169,7 @@ public class DetravToolElectricProspectorBase implements IToolStats {
     }
 
     public void onStatsAddedToTool(GT_MetaGenerated_Tool aItem, int aID) {
-        aItem.addItemBehavior(aID, new BehaviourDetravToolElectricProspector(getToolDamagePerBlockBreak()));
+//        aItem.addItemBehavior(aID, new BehaviourDetravToolElectricProspector(getToolDamagePerBlockBreak()));
     }
 
     public void onToolCrafted(ItemStack aStack, EntityPlayer aPlayer) {
