@@ -22,27 +22,26 @@ import java.util.List;
  */
 @ChannelHandler.Sharable
 public class DetravNetwork extends MessageToMessageCodec<FMLProxyPacket, DetravPacket> {
-
     static public DetravNetwork INSTANCE;
     private final EnumMap<Side, FMLEmbeddedChannel> mChannel;
-    private DetravPacket[] mSubChannels;
+    private DetravPacket[] mSubChannels = new DetravPacket[]{new ProspectingPacket()};
 
     public DetravNetwork() {
         INSTANCE = this;
         this.mChannel = NetworkRegistry.INSTANCE.newChannel("DetravScanner", this, new HandlerShared());
     }
 
+
     @Override
-    protected void encode(ChannelHandlerContext ctx, DetravPacket msg, List<Object> out) throws Exception {
+    protected void encode(ChannelHandlerContext ctx, DetravPacket msg, List<Object> out) {
         out.add(new FMLProxyPacket(Unpooled.buffer().writeByte(msg.getPacketID()).writeBytes(msg.encode()).copy(), ctx.channel().attr(NetworkRegistry.FML_CHANNEL).get()));
     }
 
     @SuppressWarnings("UnstableApiUsage")
     @Override
-    protected void decode(ChannelHandlerContext ctx, FMLProxyPacket msg, List<Object> out) throws Exception {
+    protected void decode(ChannelHandlerContext ctx, FMLProxyPacket msg, List<Object> out) {
         ByteArrayDataInput aData = ByteStreams.newDataInput(msg.payload().array());
-        aData.readByte(); // Sub Channel - Ignore
-        out.add(ProspectingPacket.decode(aData));
+        out.add(mSubChannels[aData.readByte()].decode(aData));
     }
 
     public void sendToPlayer(DetravPacket aPacket, EntityPlayerMP aPlayer) {

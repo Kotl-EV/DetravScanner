@@ -27,19 +27,21 @@ import java.util.Set;
  * Created by wital_000 on 20.03.2016.
  */
 public class ProspectingPacket extends DetravPacket {
-    public final int chunkX;
-    public final int chunkZ;
-    public final int posX;
-    public final int posZ;
-    public final int size;
-    public final int ptype;
-    public final HashMap<Byte, Short>[][] map;
-    public final HashMap<String, Integer> ores;
-    public final HashMap<Short, String> metaMap;
+    public int chunkX;
+    public int chunkZ;
+    public int posX;
+    public int posZ;
+    public int size;
+    public int ptype;
+    public HashMap<Byte, Short>[][] map;
+    public HashMap<String, Integer> ores;
+    public HashMap<Short, String> metaMap;
     public static final HashMap<Integer, short[]> fluidColors = new HashMap<>();
 
     public int level = -1;
 
+    public ProspectingPacket() {
+    }
 
     public ProspectingPacket(int chunkX, int chunkZ, int posX, int posZ, int size, int ptype) {
         this.chunkX = chunkX;
@@ -60,12 +62,13 @@ public class ProspectingPacket extends DetravPacket {
         try {
             if(packet.ptype == 0 || packet.ptype == 1) {
                 // Ore or Small Ore
-                if (meta < 7000 || meta > 7500) {
-                    if (meta > 0) {
-                        Materials tMaterial = GregTech_API.sGeneratedMaterials[meta % 1000];
-                        rgba = tMaterial.getRGBA();
-                        name = tMaterial.getLocalizedNameForItem(GT_LanguageManager.getTranslation("gt.blockores." + meta + ".name"));
-                    }
+                if (meta > 0 && (meta < 7000 || meta > 7500)) {
+                    Materials tMaterial = GregTech_API.sGeneratedMaterials[meta % 1000];
+                    rgba = tMaterial.getRGBA();
+                    name = tMaterial.getLocalizedNameForItem(GT_LanguageManager.getTranslation("gt.blockores." + meta + ".name"));
+                }
+                else {
+                    return;
                 }
             } else if (packet.ptype == 2) {
                 // Fluid
@@ -93,7 +96,7 @@ public class ProspectingPacket extends DetravPacket {
         packet.metaMap.put(meta, name);
     }
 
-    public static Object decode(ByteArrayDataInput aData) {
+    public Object decode(ByteArrayDataInput aData) {
         ProspectingPacket packet = new ProspectingPacket(aData.readInt(), aData.readInt(), aData.readInt(), aData.readInt(), aData.readInt(), aData.readInt());
         packet.level = aData.readInt();
 
