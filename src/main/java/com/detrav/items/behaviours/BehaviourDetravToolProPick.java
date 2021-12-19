@@ -3,6 +3,7 @@ package com.detrav.items.behaviours;
 import com.detrav.DetravScannerMod;
 import com.detrav.items.DetravMetaGeneratedTool01;
 import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.registry.LanguageRegistry;
 import gregtech.api.GregTech_API;
 import gregtech.api.enums.Materials;
 import gregtech.api.items.GT_MetaBase_Item;
@@ -17,11 +18,13 @@ import gregtech.common.items.behaviors.Behaviour_None;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
@@ -35,33 +38,6 @@ import java.util.SplittableRandom;
  * Created by wital_000 on 19.03.2016.
  */
 public class BehaviourDetravToolProPick extends Behaviour_None {
-
-    static final String[] foundTexts = new String[]{
-            "Found nothing of interest",        //0
-            " traces.",                 //1-9
-            " small sample.",         //10-29
-            " medium sample.",        //30-59
-            " large sample.",         //60-99
-            " very large sample.",    //100-**
-            "Found "
-    };
-
-    static final String[] DISTANCETEXTS = new String[]{
-            " next to you,",     // 0 chunks away
-            " close to you,",    // 1-2 chunks aways
-            " at medium range,", // 3 - 5 chunks away
-            " at long range,",   // 6 -8 chunks away
-            " far away,",        // 9 + chunks away
-    };
-
-    static final int[] DISTANCEINTS = new int[] {
-            0,
-            4,
-            25,
-            64,
-    };
-    int distTextIndex;
-
     HashMap<String, Integer> ores;
     int badluck;
 
@@ -83,75 +59,21 @@ public class BehaviourDetravToolProPick extends Behaviour_None {
         {
             if (!aWorld.isRemote && aRandom.nextInt(100) < chance) {
                 FluidStack fStack = GT_UndergroundOil.undergroundOil(aWorld.getChunkFromBlockCoords(aX, aZ), -1);
-//                addChatMassageByValue(aPlayer,fStack.amount/2,"a Fluid");//fStack.getLocalizedName());
-            	/*boolean fluid = GT_UndergroundOil.undergroundOil(aWorld.getChunkFromBlockCoords(aX, aZ), -1)!=null &&GT_UndergroundOil.undergroundOil(aWorld.getChunkFromBlockCoords(aX, aZ), -1).getFluid()!=null;
-            	if (fluid)
-            		aPlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.GREEN+"You found some liquid."));
-            	else
-            		aPlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.RED+"You found no liquid."));*/
-
             }
             return true;
         }
         if (aWorld.getBlock(aX, aY, aZ).getMaterial() == Material.rock || aWorld.getBlock(aX, aY, aZ).getMaterial() == Material.ground || aWorld.getBlock(aX, aY, aZ) == GregTech_API.sBlockOres1) {
             if (!aWorld.isRemote) {
-//                prospectChunks( (DetravMetaGeneratedTool01) aItem, aStack, aPlayer, aWorld, aX, aY, aZ, aRandom, chance );
             }
             return true;
         }
         return false;
     }
 
-    /*protected void prospectChunks(GT_MetaBase_Item aItem, ItemStack aStack, EntityPlayer aPlayer, World aWorld, int aX, int aY, int aZ, SplittableRandom aRandom, int chance)
-    {
-        int bX = aX;
-        int bZ = aZ;
-        
-        badluck = 0;
-        ores = new HashMap<String, Integer>();
-        
-        int range = ((DetravMetaGeneratedTool01)aItem).getHarvestLevel(aStack, "")/2+(aStack.getItemDamage()/4);
-        if ((range % 2) == 0 ) {
-            range += 1;   // kinda not needed here, divide takes it out, but we put it back in with the range+1 in the loop
-        }
-        range = range/2; // Convert range from diameter to radius
-        
-        aPlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.GOLD+"Prospecting at " + EnumChatFormatting.BLUE + "(" + bX + ", " + bZ + ")" ));
-        for (int x = -(range); x<(range+1);++x){
-            aX=bX+(x*16);
-            for (int z = -(range); z<(range+1);++z) {
-        
-                aZ=bZ+(z*16);
-                int dist = x*x + z*z;
-        
-                for( distTextIndex = 0; distTextIndex < DISTANCEINTS.length; distTextIndex++ ) {
-                    if ( dist <= DISTANCEINTS[distTextIndex] ) {
-                        break;
-                    }
-                }
-                if (DetravScannerMod.DEBUGBUILD)
-                    aPlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.YELLOW+"Chunk at "+ aX +"|"+aZ+" to "+(aX+16)+"|"+(aZ+16) + DISTANCETEXTS[distTextIndex]));
-                processOreProspecting((DetravMetaGeneratedTool01) aItem, aStack, aPlayer, aWorld.getChunkFromBlockCoords(aX, aZ), aWorld.getTileEntity(aX, aY, aZ),GT_OreDictUnificator.getAssociation(new ItemStack(aWorld.getBlock(aX, aY, aZ), 1, aWorld.getBlockMetadata(aX, aY, aZ))), aRandom, chance);
-            }
-        }
-        
-        for (String key : ores.keySet()) {
-            int value = ores.get(key);
-           addChatMassageByValue(aPlayer,value,key);
-        }
-        
-        if( badluck == 0) {
-            aPlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.WHITE + "All chunks scanned successfully!"));
-        } else {
-            aPlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.WHITE + "Failed on " + badluck + " chunks. Better luck next time!"));
-        }
-    }*/
-
-    // Used by Electric scanner when scanning the chunk whacked by the scanner. 100% chance find rate
     protected void prospectSingleChunk(GT_MetaBase_Item aItem, ItemStack aStack, EntityPlayer aPlayer, World aWorld, int aX, int aY, int aZ )
     {
         ores = new HashMap<String, Integer>();
-        aPlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.GOLD+"Prospecting at " + EnumChatFormatting.BLUE + "(" + aX + ", " + aZ + ")" ));
+        aPlayer.addChatMessage(new ChatComponentTranslation("detrav.scanner.prospecting", aX, aZ));
         processOreProspecting(aItem, aStack, aPlayer, aWorld.getChunkFromBlockCoords(aX, aZ), aWorld.getTileEntity(aX, aY, aZ),GT_OreDictUnificator.getAssociation(new ItemStack(aWorld.getBlock(aX, aY, aZ), 1, aWorld.getBlockMetadata(aX, aY, aZ))), new SplittableRandom(), 1000);
         
         for (String key : ores.keySet()) {
@@ -162,24 +84,24 @@ public class BehaviourDetravToolProPick extends Behaviour_None {
 
     protected void processOreProspecting(GT_MetaBase_Item aItem, ItemStack aStack, EntityPlayer aPlayer, Chunk aChunk, TileEntity aTileEntity, ItemData tAssotiation, SplittableRandom aRandom, int chance)//TileEntity aTileEntity)
     {
+		//TODO LuxinfineTeam code START
+        String lang = aPlayer instanceof EntityPlayerMP ? ((EntityPlayerMP)aPlayer).translator : "en_US";
+		//TODO LuxinfineTeam code END
         if (aTileEntity != null) {
             if (aTileEntity instanceof GT_TileEntity_Ores) {
                 GT_TileEntity_Ores gt_entity = (GT_TileEntity_Ores) aTileEntity;
                 short meta = gt_entity.getMetaData();
-                String name = Materials.getLocalizedNameForItem(GT_LanguageManager.getTranslation("gt.blockores." + meta + ".name"), meta%1000);
+                //TODO LuxinfineTeam code RELACE
+                //String name = Materials.getLocalizedNameForItem(GT_LanguageManager.getTranslation("gt.blockores." + meta + ".name"), meta%1000);
+                String name = this.getTranslatedNameFromBlock(lang, "gt.blockores." + meta + ".name", meta % 1000);
                 addOreToHashMap(name, aPlayer);
-//                if (!aPlayer.capabilities.isCreativeMode)
-//                    aItem.doDamage(aStack, this.mCosts);
                 return;
             }
         } else if (tAssotiation!=null){
-            //if (aTileEntity instanceof GT_TileEntity_Ores) {
             try {
                 GT_TileEntity_Ores gt_entity = (GT_TileEntity_Ores) aTileEntity;
                 String name = tAssotiation.toString();
                 addChatMassageByValue(aPlayer, -1, name);
-//                if (!aPlayer.capabilities.isCreativeMode)
-//                    aItem.doDamage(aStack, this.mCosts);
                 return;
             }
             catch (Exception e)
@@ -189,6 +111,7 @@ public class BehaviourDetravToolProPick extends Behaviour_None {
         }else if (aRandom.nextInt(100) < chance) {
             int data = getMode(aStack);
             final String small_ore_keyword = StatCollector.translateToLocal("detrav.scanner.small_ore.keyword");
+            final String ore_keyword = StatCollector.translateToLocal("detrav.scanner.ore.keyword");
             for (int x = 0; x < 16; x++)
                 for (int z = 0; z < 16; z++) {
                     int ySize = aChunk.getHeightValue(x, z);
@@ -204,25 +127,30 @@ public class BehaviourDetravToolProPick extends Behaviour_None {
                                 try {
                                     String name = Materials.getLocalizedNameForItem(GT_LanguageManager.getTranslation(tBlock.getUnlocalizedName() + "." + tMetaID + ".name"), tMetaID%1000);
                                     if (data != 1 && name.startsWith(small_ore_keyword)) continue;
-                                    if (name.startsWith("Small")) if (data != 1) continue;
-                                    if (name.startsWith("Small")) if(data!=1) continue;
-                                    addOreToHashMap(name, aPlayer);
+                                    if (name.startsWith(small_ore_keyword)) if (data != 1) continue;
+									//TODO LuxinfineTeam code REPLACE
+                                    //addOreToHashMap(name, aPlayer);
+									String translateName = this.getTranslatedNameFromBlock(lang, tBlock.getUnlocalizedName() + "." + tMetaID + ".name", tMetaID%1000);
+                                    addOreToHashMap(translateName, aPlayer);
+									//TODO LuxinfineTeam code
                                 }
                                 catch(Exception e) {
                                     String name = tBlock.getUnlocalizedName() + ".";
                                     if (data != 1 && name.contains(".small."))  continue;
-                                    if (name.startsWith("Small")) if(data!=1) continue;
+                                    if (name.startsWith(small_ore_keyword)) if(data!=1) continue;
                                     addOreToHashMap(name, aPlayer);
                                 }
                             }
                         } else if (data == 1) {
                             tAssotiation = GT_OreDictUnificator.getAssociation(new ItemStack(tBlock, 1, tMetaID));
-                            if ((tAssotiation != null) && (tAssotiation.mPrefix.toString().startsWith("ore"))) {
+                            if ((tAssotiation != null) && (tAssotiation.mPrefix.toString().startsWith(ore_keyword))) {
                                 try {
                                     try {
                                         tMetaID = (short)tAssotiation.mMaterial.mMaterial.mMetaItemSubID;
 
-                                        String name = Materials.getLocalizedNameForItem(GT_LanguageManager.getTranslation("gt.blockores." + tMetaID + ".name"), tMetaID%1000);
+                                        //TODO LuxinfineTeam code REPLACE
+                                        //String name = Materials.getLocalizedNameForItem(GT_LanguageManager.getTranslation(tBlock.getUnlocalizedName() + "." + tMetaID + ".name"), tMetaID%1000);
+                                        String name = this.getTranslatedNameFromBlock(lang, tBlock.getUnlocalizedName() + "." + tMetaID + ".name", tMetaID % 1000);
                                         addOreToHashMap(name, aPlayer);
                                     } catch (Exception e1) {
                                         String name = tAssotiation.toString();
@@ -235,27 +163,20 @@ public class BehaviourDetravToolProPick extends Behaviour_None {
 
                     }
                 }
-
-//            if (!aPlayer.capabilities.isCreativeMode)
-//                aItem.doDamage(aStack, this.mCosts);
-
             return;
         }
         else  {
             if (DetravScannerMod.DEBUGBUILD)
                 aPlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.RED+" Failed on this chunk"));
         	badluck++;
-//        	if (!aPlayer.capabilities.isCreativeMode)
-//        		aItem.doDamage(aStack, this.mCosts/4);
         }
-       // addChatMassageByValue(aPlayer,0,null);
     }
 
     void addOreToHashMap(String orename, EntityPlayer aPlayer) {
-        String oreDistance = orename + DISTANCETEXTS[distTextIndex]; // orename + the textual distance of the ore
+        String oreDistance = orename; // orename + the textual distance of the ore
         if (!ores.containsKey(oreDistance)) {
             if (DetravScannerMod.DEBUGBUILD)
-                aPlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.GREEN+" Adding to oremap " + oreDistance));
+                aPlayer.addChatMessage(new ChatComponentText(oreDistance));
             ores.put(oreDistance, 1);
         } else {
             int val = ores.get(oreDistance);
@@ -264,20 +185,18 @@ public class BehaviourDetravToolProPick extends Behaviour_None {
     }
 
     void addChatMassageByValue(EntityPlayer aPlayer, int value, String name) {
-        if (value < 0) {
-            aPlayer.addChatMessage(new ChatComponentText(foundTexts[6] + name));
-        } else if (value < 1) {
-            aPlayer.addChatMessage(new ChatComponentText(foundTexts[0]));
-        } else if (value < 10)
-            aPlayer.addChatMessage(new ChatComponentText(name + foundTexts[1]));
+        if (value < 1)
+            aPlayer.addChatMessage(new ChatComponentTranslation("detrav.scanner.prospecting.nothing"));
+        else if (value < 10)
+            aPlayer.addChatMessage(new ChatComponentTranslation("detrav.scanner.prospecting.traces", new ChatComponentTranslation(name), value));
         else if (value < 30)
-            aPlayer.addChatMessage(new ChatComponentText(name + foundTexts[2]));
+            aPlayer.addChatMessage(new ChatComponentTranslation("detrav.scanner.prospecting.smallsample", new ChatComponentTranslation(name), value));
         else if (value < 60)
-            aPlayer.addChatMessage(new ChatComponentText(name + foundTexts[3]));
+            aPlayer.addChatMessage(new ChatComponentTranslation("detrav.scanner.prospecting.mediumsample", new ChatComponentTranslation(name), value));
         else if (value < 100)
-            aPlayer.addChatMessage(new ChatComponentText(name + foundTexts[4]));
+            aPlayer.addChatMessage(new ChatComponentTranslation("detrav.scanner.prospecting.largesample", new ChatComponentTranslation(name), value));
         else
-            aPlayer.addChatMessage(new ChatComponentText(name + foundTexts[5]));
+            aPlayer.addChatMessage(new ChatComponentTranslation("detrav.scanner.prospecting.verylargesample", new ChatComponentTranslation(name), value));
     }
 
     public static int getPolution(World aWorld, int aX, int aZ)
@@ -300,4 +219,20 @@ public class BehaviourDetravToolProPick extends Behaviour_None {
         tag.setInteger("mode", mode);
         is.setTagCompound(tag);
     }
+
+    //TODO LuxinfineTeam code START
+    private String getTranslatedNameFromBlock(String lang, String alternative, int meta) {
+        if (meta >= 0 && meta < 1000) {
+            Materials material = GregTech_API.sGeneratedMaterials[meta];
+            if (material != null) {
+				String materialName = material.mLocalizedName;
+				material.mLocalizedName = LanguageRegistry.instance().getStringLocalization("Material." + material.mName.toLowerCase(), lang);
+                String result = material.getLocalizedNameForItem(LanguageRegistry.instance().getStringLocalization(alternative, lang));
+				material.mLocalizedName = materialName;
+				return result;
+			}
+        }
+        return LanguageRegistry.instance().getStringLocalization(alternative, lang);
+    }
+    //TODO LuxinfineTeam code END
 }

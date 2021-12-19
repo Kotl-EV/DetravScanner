@@ -1,41 +1,31 @@
-detrav.scanner.mode.0=Set Mode: Ores
-detrav.scanner.mode.1=Set Mode: Ores and Small Ores
-detrav.scanner.mode.2=Set Mode: Underground Fluids
-detrav.scanner.mode.3=Set Mode: Pollution
-detrav.scanner.mode.error=Set Mode: ERROR
-
-detrav.scanner.distance.texts.0= next to you,
-detrav.scanner.distance.texts.1= close to you,
-detrav.scanner.distance.texts.2= at medium range,
-detrav.scanner.distance.texts.3= at long range,
-detrav.scanner.distance.texts.4= far away,
-
+gt.metaitem.01.32375.name=Prospector scanner MV
+gt.metaitem.01.32376.name=Prospector scanner HV
+gt.metaitem.01.32377.name=Prospector scanner EV
+gt.metaitem.01.32375.tooltip=Use to prospect ores
+gt.metaitem.01.32376.tooltip=Use to prospect ores
+gt.metaitem.01.32377.tooltip=Use to prospect ores
+detrav.scanner.mode.0=§6Set Mode: Ores
+detrav.scanner.mode.1=§2Set Mode: Ores and Small Ores
+detrav.scanner.mode.2=§3Set Mode: Underground Fluids
+detrav.scanner.mode.3=§5Set Mode: Pollution
+detrav.scanner.mode.error=§4Set Mode: ERROR
+detrav.scanner.scanning=§9Scanning...
 detrav.scanner.small_ore.keyword=Small
-
-detrav.scanner.found.texts.0=Found nothing of interest
-detrav.scanner.found.texts.1= traces.
-detrav.scanner.found.texts.2= small sample.
-detrav.scanner.found.texts.3= medium sample.
-detrav.scanner.found.texts.4= large sample.
-detrav.scanner.found.texts.5= very large sample.
-detrav.scanner.found.texts.6=Found
-
-# Don't translate "%badluck"
-detrav.scanner.success=All chunks scanned successfully!
-detrav.scanner.fail=Failed on %badluck chunks. Better luck next time!
-
-detrav.scanner.prospecting=Prospecting at
-
-tooltip.detrav.scanner.durability=Durability:
-tooltip.detrav.scanner.range=Chunks:
-tooltip.detrav.scanner.usage.0=Right click on rock for prospecting current chunk!
-tooltip.detrav.scanner.usage.1=Right click on bedrock for prospecting fluids!
-tooltip.detrav.scanner.usage.2=Right click for scanning!
-tooltip.detrav.scanner.usage.3=Double click any entry to invert the background color!
-tooltip.detrav.scanner.success.chance=Chance of a successful scan:
-tooltip.detrav.scanner.distance.0=next to you (0 chunks away), close to you (1-2)
-tooltip.detrav.scanner.distance.1=at medium range (3-5), at long range (6-8), far away (9+)
-tooltup.detrav.scanner.quantum=Area scan requires full Quantum Armor set equipped
-
+detrav.scanner.ore.keyword=ore
+detrav.tooltip.scanner.usage.0=Right click block to prospecting current chunk!
+detrav.tooltip.scanner.usage.1=Shift rightclick air to change mode
+detrav.tooltip.scanner.quantum=Right click air to prospect current area (Requires Quantum Set)
+detrav.tooltip.scanner.usage.modes=Available modes: GT-Ores, GT-Ores with small, Underbedrock Fluids, GT-Pollution
+detrav.tooltip.scan.area=Scan area: %d x %d chunks
+detrav.tooltip.uses=Uses %d per scan
+detrav.scanner.QuantumSynchronization.Failed=§4Quantum Synchronization Failed
+detrav.scanner.pollution.count=§aPollution detected: %d
 gui.detrav.scanner.pollution=Pollution
-gui.detrav.scanner.unknown_fluid=Unknown Fluid name!
+detrav.scanner.prospecting=§aProspecting at §6( %d , %d )
+detrav.scanner.prospecting.founded=Founded in this chunk %d
+detrav.scanner.prospecting.nothing=Found nothing of interest
+detrav.scanner.prospecting.traces=%d traces %d.
+detrav.scanner.prospecting.smallsample=%d small sample %d.
+detrav.scanner.prospecting.mediumsample=%d medium sample %d.
+detrav.scanner.prospecting.largesample=%d large sample %d.
+detrav.scanner.prospecting.verylargesample=%d very large sample %d.

@@ -1,9 +1,8 @@
 package com.detrav.items.behaviours;
 
-import com.detrav.items.DetravMetaGeneratedTool01;
+
 import com.detrav.net.DetravNetwork;
 import com.detrav.net.ProspectingPacket;
-import gregtech.api.enums.GT_Values;
 import gregtech.api.items.GT_MetaBase_Item;
 import gregtech.api.objects.ItemData;
 import gregtech.api.util.GT_LanguageManager;
@@ -17,9 +16,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
@@ -28,6 +27,8 @@ import net.minecraftforge.fluids.FluidStack;
 
 import java.util.ArrayList;
 import java.util.List;
+
+
 
 /**
  * Created by wital_000 on 19.03.2016.
@@ -43,12 +44,11 @@ public class BehaviourDetravToolElectricProspector extends BehaviourDetravToolPr
     }
 
     public ItemStack onItemRightClick(GT_MetaBase_Item aItem, ItemStack aStack, World aWorld, EntityPlayer aPlayer) {
-//        radius = 5;
         if (aWorld.isRemote) {
             return aStack;
         }
         if (!(aPlayer.isSneaking() || aPlayer.capabilities.isCreativeMode || GT_Utility.isWearingFullQuantumArmor(aPlayer))) {
-            aPlayer.addChatMessage(new ChatComponentText("Quantum Synchronization Failed"));
+            aPlayer.addChatMessage(new ChatComponentTranslation("detrav.scanner.QuantumSynchronization.Failed"));
             return aStack;
         }
         if (!aWorld.isRemote && canUse(aItem, aStack)) {
@@ -58,31 +58,30 @@ public class BehaviourDetravToolElectricProspector extends BehaviourDetravToolPr
                 if (data > 3) data = 0;
                 switch (data) {
                     case 0:
-                        aPlayer.addChatMessage(new ChatComponentText("Set Mode: Ore, Any Rock Block"));
+                        aPlayer.addChatMessage(new ChatComponentTranslation("detrav.scanner.mode.0"));
                         break;
                     case 1:
-                        aPlayer.addChatMessage(new ChatComponentText("Set Mode: Ore (with small), Any Rock Block"));
+                        aPlayer.addChatMessage(new ChatComponentTranslation("detrav.scanner.mode.1"));
                         break;
                     case 2:
-                        aPlayer.addChatMessage(new ChatComponentText("Set Mode: Oil, Any Block"));
+                        aPlayer.addChatMessage(new ChatComponentTranslation("detrav.scanner.mode.2"));
                         break;
                     case 3:
-                        aPlayer.addChatMessage(new ChatComponentText("Set Mode: Pollution, Any Block"));
+                        aPlayer.addChatMessage(new ChatComponentTranslation("detrav.scanner.mode.3"));
                         break;
                     default:
-                        aPlayer.addChatMessage(new ChatComponentText("Set Mode: ERROR"));
+                        aPlayer.addChatMessage(new ChatComponentTranslation("detrav.scanner.mode.error"));
                         break;
                 }
                 setMode(aStack, data);
                 return super.onItemRightClick(aItem, aStack, aWorld, aPlayer);
             }
 
-//            final DetravMetaGeneratedTool01 tool = (DetravMetaGeneratedTool01) aItem;
             final int cX = ((int) aPlayer.posX) >> 4;
             final int cZ = ((int) aPlayer.posZ) >> 4;
             int size = radius + 1;
             final List<Chunk> chunks = new ArrayList<>();
-            aPlayer.addChatMessage(new ChatComponentText("Scanning..."));
+            aPlayer.addChatMessage(new ChatComponentTranslation("detrav.scanner.scanning"));
             for (int i = -size; i <= size; i++)
                 for (int j = -size; j <= size; j++)
                     if (i != -size && i != size && j != -size && j != size)
@@ -90,6 +89,7 @@ public class BehaviourDetravToolElectricProspector extends BehaviourDetravToolPr
             size = size - 1;
             final ProspectingPacket packet = new ProspectingPacket(cX, cZ, (int) aPlayer.posX, (int) aPlayer.posZ, size, data);
             final String small_ore_keyword = StatCollector.translateToLocal("detrav.scanner.small_ore.keyword");
+            final String ore_keyword = StatCollector.translateToLocal("detrav.scanner.ore.keyword");
             for (Chunk c : chunks) {
                 for (int x = 0; x < 16; x++)
                     for (int z = 0; z < 16; z++) {
@@ -116,7 +116,7 @@ public class BehaviourDetravToolElectricProspector extends BehaviourDetravToolPr
                                         }
                                     } else if (data == 1) {
                                         ItemData tAssotiation = GT_OreDictUnificator.getAssociation(new ItemStack(tBlock, 1, tMetaID));
-                                        if ((tAssotiation != null) && (tAssotiation.mPrefix.toString().startsWith("ore"))) {
+                                        if ((tAssotiation != null) && (tAssotiation.mPrefix.toString().startsWith(ore_keyword))) {
                                             packet.addBlock(c.xPosition * 16 + x, y, c.zPosition * 16 + z, (short) tAssotiation.mMaterial.mMaterial.mMetaItemSubID);
                                         }
                                     }
@@ -153,13 +153,11 @@ public class BehaviourDetravToolElectricProspector extends BehaviourDetravToolPr
         return super.onItemRightClick(aItem, aStack, aWorld, aPlayer);
     }
 
-    void addChatMassageByValue(EntityPlayer aPlayer, int value, String name) {
-        if (value < 0) {
-            aPlayer.addChatMessage(new ChatComponentText(foundTexts[6] + name));
-        } else if (value < 1) {
-            aPlayer.addChatMessage(new ChatComponentText(foundTexts[0]));
-        } else
-            aPlayer.addChatMessage(new ChatComponentText(foundTexts[6] + name + " " + value));
+    void sendPolutionInfo(EntityPlayer aPlayer, int value) {
+        if(value < 1)
+            aPlayer.addChatMessage(new ChatComponentTranslation("detrav.scanner.prospecting.nothing")); //Не нашлось ничего интересного
+        else
+            aPlayer.addChatMessage(new ChatComponentTranslation("detrav.scanner.pollution.count", value)); //Обнаружено загрязнение: %d
     }
 
     public boolean onItemUse(GT_MetaBase_Item aItem, ItemStack aStack, EntityPlayer aPlayer, World aWorld, int aX, int aY, int aZ, int aSide, float hitX, float hitY, float hitZ) {
@@ -168,9 +166,8 @@ public class BehaviourDetravToolElectricProspector extends BehaviourDetravToolPr
             if (aWorld.getBlock(aX, aY, aZ) == Blocks.bedrock) {
                 if (!aWorld.isRemote) {
                     FluidStack fStack = GT_UndergroundOil.undergroundOil(aWorld.getChunkFromBlockCoords(aX, aZ), -1);
-                    addChatMassageByValue(aPlayer, fStack.amount, fStack.getLocalizedName());
-//                    if (!aPlayer.capabilities.isCreativeMode)
-//                        ((DetravMetaGeneratedTool01)aItem).doDamage(aStack, this.mCosts);
+                    addChatMassageByValue(aPlayer, fStack.amount, fStack.getUnlocalizedName());
+
                 }
                 return true;
             } else {
@@ -183,14 +180,11 @@ public class BehaviourDetravToolElectricProspector extends BehaviourDetravToolPr
         if (data < 3)
             if (!aWorld.isRemote) {
                 FluidStack fStack = GT_UndergroundOil.undergroundOil(aWorld.getChunkFromBlockCoords(aX, aZ), -1);
-                addChatMassageByValue(aPlayer, fStack.amount, fStack.getLocalizedName());
-//                if (!aPlayer.capabilities.isCreativeMode)
-//                    ((DetravMetaGeneratedTool01) aItem).doDamage(aStack, this.mCosts);
+                addChatMassageByValue(aPlayer, fStack.amount, fStack.getUnlocalizedName());
                 return true;
             }
         if (!aWorld.isRemote) {
-            int polution = getPolution(aWorld, aX, aZ);
-            addChatMassageByValue(aPlayer, polution, "Pollution");
+            sendPolutionInfo(aPlayer, getPolution(aWorld, aX, aZ));
         }
         return true;
     }
@@ -209,12 +203,13 @@ public class BehaviourDetravToolElectricProspector extends BehaviourDetravToolPr
 
     @Override
     public List<String> getAdditionalToolTips(GT_MetaBase_Item aItem, List<String> aList, ItemStack aStack) {
-        aList.add("Uses " + usage + " per scan");
-        aList.add("Scan area: " + EnumChatFormatting.YELLOW + (radius * 2 + 1) + "x" + (radius * 2 + 1) + EnumChatFormatting.GRAY + " chunks");
-        aList.add("Shift rightclick air to change mode");
-        aList.add("Available modes: GT-Ores, GT-Ores with small, Underbedrock Fluids, GT-Pollution");
-        aList.add("Right click block to prospect current chunk");
-        aList.add("Right click air to prospect current area (Requires Quantum Set)");
+        int radiuschunk = radius * 2 + 1;
+        aList.add(StatCollector.translateToLocalFormatted("detrav.tooltip.uses", usage));
+        aList.add(StatCollector.translateToLocalFormatted("detrav.tooltip.scan.area", radiuschunk, radiuschunk));
+        aList.add(StatCollector.translateToLocal("detrav.tooltip.scanner.usage.1"));
+        aList.add(StatCollector.translateToLocal("detrav.tooltip.scanner.usage.modes"));
+        aList.add(StatCollector.translateToLocal("detrav.tooltip.scanner.usage.0"));
+        aList.add(StatCollector.translateToLocal("detrav.tooltip.scanner.quantum"));
         return super.getAdditionalToolTips(aItem, aList, aStack);
     }
 }

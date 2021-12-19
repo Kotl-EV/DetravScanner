@@ -14,10 +14,8 @@ public class FluidColors {
 
         reFillFluidColors();
 
-        //ProgressManager.ProgressBar progressBar = ProgressManager.push("Making Fluid Colors", (int) (Materials.values().length + FluidRegistry.getRegisteredFluids().values().stream().filter(Objects::nonNull).count()));
         Arrays.stream(Materials.values()).forEach(
                 mat -> {
-                    //progressBar.step(mat.mDefaultLocalName);
                     if ( mat.getSolid(0) != null)
                         fluidColors.putIfAbsent(mat.getSolid(0).getFluidID(), mat.mRGBa);
                     if ( mat.getGas(0) != null)
@@ -29,16 +27,13 @@ public class FluidColors {
                 }
         );
         FluidRegistry.getRegisteredFluids().values().stream().filter(Objects::nonNull).forEach(fluid -> {
-                    // progressBar.step(fluid.getName());
                     fluidColors.putIfAbsent(fluid.getID(), convertColorInt(fluid.getColor()));
                 }
         );
-        // ProgressManager.pop(progressBar);
     }
 
     private static void reFillFluidColors(){
         try {
-            // Should probably be put somewhere else, but I suck at Java
             fluidColors.put(Materials.NatruralGas.mGas.getID(), new short[]{0x00, 0xff, 0xff});
             fluidColors.put(Materials.OilLight.mFluid.getID(), new short[]{0xff, 0xff, 0x00});
             fluidColors.put(Materials.OilMedium.mFluid.getID(), new short[]{0x00, 0xFF, 0x00});
@@ -57,22 +52,9 @@ public class FluidColors {
             fluidColors.put(Materials.Ethane.mGas.getID(), new short[]{0x40, 0x80, 0x20});
             fluidColors.put(Materials.Ethylene.mGas.getID(), new short[]{0xd0, 0xd0, 0xd0});
             fluidColors.put(FluidRegistry.LAVA.getID(), new short[]{0xFF, 0x00, 0x00});
-
-            //possible nulls
             fluidColors.put(Materials.LiquidAir.mFluid.getID(), new short[]{0x40, 0x80, 0x40});
-        }catch (Exception ignored){}
-/*
-                   Set set = fluidColors.entrySet();
-                   Iterator iterator = set.iterator();
-                   System.out.println( "DETRAV SCANNER DEBUG" );
-                   while(iterator.hasNext()) {
-                       Map.Entry mentry = (Map.Entry) iterator.next();
-                       System.out.println( "key is: "+ (Integer)mentry.getKey() + " & Value is: " +
-                                           ((short[])mentry.getValue())[0] + " " +
-                                           ((short[])mentry.getValue())[1] + " " +
-                                           ((short[])mentry.getValue())[2] );
-                   }
-*/
+        }catch (Exception ignored){
+        }
     }
 
     private static short[] convertColorInt(int color){

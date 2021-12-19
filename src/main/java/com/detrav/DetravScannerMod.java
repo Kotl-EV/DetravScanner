@@ -6,7 +6,6 @@ import com.detrav.net.DetravNetwork;
 import com.detrav.proxies.CommonProxy;
 import com.detrav.utils.DetravCreativeTab;
 import com.detrav.utils.FluidColors;
-import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.SidedProxy;
@@ -22,12 +21,12 @@ import net.minecraftforge.common.config.Configuration;
 public class DetravScannerMod
 {
     public static final String MODID = "detravscannermod";
-    public static final String VERSION = "1.5.4";
+    public static final String VERSION = "1.6.1";
     public static final String DEBUGOVERRIDE = "@false";
     public static final boolean DEBUGBUILD = Boolean.parseBoolean(DEBUGOVERRIDE.substring(1));
     public static final CreativeTabs TAB_DETRAV = new DetravCreativeTab();
 
-    public static final org.apache.logging.log4j.Logger Logger = LogManager.getLogger("GT Scanner Mod");
+    public static final org.apache.logging.log4j.Logger Logger = LogManager.getLogger("GT_Scanner_Mod");
     
     @SidedProxy(clientSide = "com.detrav.proxies.ClientProxy", serverSide = "com.detrav.proxies.ServerProxy")
     public static CommonProxy proxy;

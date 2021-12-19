@@ -1,6 +1,5 @@
 package com.detrav.utils;
 
-import com.detrav.items.DetravMetaGeneratedTool01;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.creativetab.CreativeTabs;
@@ -9,9 +8,6 @@ import net.minecraft.item.Item;
 
 import java.util.List;
 
-/**
- * Created by wital_000 on 19.03.2016.
- */
 public class DetravCreativeTab extends CreativeTabs {
 
     public DetravCreativeTab() {
@@ -36,9 +32,6 @@ public class DetravCreativeTab extends CreativeTabs {
             for (CreativeTabs tab : item.getCreativeTabs()) {
                 if (tab == this) {
                     item.getSubItems(item, this, p_78018_1_);
-//                    if (item instanceof DetravMetaGeneratedTool01) {
-//                        ((DetravMetaGeneratedTool01) item).getDetravSubItems(item, this, p_78018_1_);
-//                    }
                 }
             }
         }

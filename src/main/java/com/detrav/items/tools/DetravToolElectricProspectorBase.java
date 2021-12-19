@@ -1,7 +1,6 @@
 package com.detrav.items.tools;
 
 import com.detrav.enums.Textures01;
-import com.detrav.items.behaviours.BehaviourDetravToolElectricProspector;
 import gregtech.GT_Mod;
 import gregtech.api.GregTech_API;
 import gregtech.api.damagesources.GT_DamageSources;
@@ -169,7 +168,6 @@ public class DetravToolElectricProspectorBase implements IToolStats {
     }
 
     public void onStatsAddedToTool(GT_MetaGenerated_Tool aItem, int aID) {
-//        aItem.addItemBehavior(aID, new BehaviourDetravToolElectricProspector(getToolDamagePerBlockBreak()));
     }
 
     public void onToolCrafted(ItemStack aStack, EntityPlayer aPlayer) {
