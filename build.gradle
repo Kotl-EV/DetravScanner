@@ -33,9 +33,9 @@ targetCompatibility = 1.8
 
 compileJava.options.encoding = 'UTF-8'
 
-version = "${config.detravscanner.version}"
+version = "1.6.1"
 group= "com.detrav.detravscannermod" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "GT Scanner Mod"
+archivesBaseName = "GT_Scanner_Mod"
 
 minecraft {
     version = "${config.minecraft.version}-${config.forge.version}"
@@ -46,6 +46,12 @@ configurations {
     provided
     embedded
     compile.extendsFrom provided, embedded
+}
+
+jar {
+    manifest {
+        attributes 'FMLAT': 'DetravScanner_at.cfg'
+    }
 }
 
 repositories {
