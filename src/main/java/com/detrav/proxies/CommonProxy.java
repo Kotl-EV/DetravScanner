@@ -3,11 +3,13 @@ package com.detrav.proxies;
 import com.detrav.events.DetravLoginEventHandler;
 import com.detrav.gui.DetravScannerGUI;
 import com.detrav.items.behaviours.BehaviourDetravToolElectricProspector;
+import com.detrav.utils.StackUtils;
 import cpw.mods.fml.common.network.IGuiHandler;
 import cpw.mods.fml.common.registry.GameRegistry;
 import gregtech.api.enums.*;
 import gregtech.api.util.GT_ModHandler;
 import gregtech.common.items.GT_MetaGenerated_Item_01;
+import ic2.api.item.IC2Items;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -40,7 +42,7 @@ public class CommonProxy implements IGuiHandler {
         DetravLoginEventHandler.register();
         GT_ModHandler.addCraftingRecipe(scannerMV.copy(), GT_ModHandler.RecipeBits.DISMANTLEABLE | GT_ModHandler.RecipeBits.DO_NOT_CHECK_FOR_COLLISIONS | GT_ModHandler.RecipeBits.BUFFERED, new Object[]{"EHR", "CSC", "PBP", 'S', ItemList.Cover_Screen, 'R', ItemList.Sensor_MV, 'H', OrePrefixes.toolHeadDrill.get(Materials.Steel), 'E', ItemList.Emitter_MV, 'C', OrePrefixes.circuit.get(Materials.Good), 'P', OrePrefixes.plate.get(Materials.Aluminium), 'B', ItemList.Battery_RE_MV_Lithium.get(1L)});
         GT_ModHandler.addCraftingRecipe(scannerHV.copy(), GT_ModHandler.RecipeBits.DISMANTLEABLE | GT_ModHandler.RecipeBits.DO_NOT_CHECK_FOR_COLLISIONS | GT_ModHandler.RecipeBits.BUFFERED, new Object[]{"EHR", "CSC", "PBP", 'S', ItemList.Cover_Screen, 'R', ItemList.Sensor_HV, 'H', OrePrefixes.toolHeadDrill.get(Materials.StainlessSteel), 'E', ItemList.Emitter_HV, 'C', OrePrefixes.circuit.get(Materials.Advanced), 'P', OrePrefixes.plate.get(Materials.StainlessSteel), 'B', ItemList.Battery_RE_HV_Lithium.get(1L)});
-        GT_ModHandler.addCraftingRecipe(scannerEV.copy(), GT_ModHandler.RecipeBits.DISMANTLEABLE | GT_ModHandler.RecipeBits.DO_NOT_CHECK_FOR_COLLISIONS | GT_ModHandler.RecipeBits.BUFFERED, new Object[]{"EHR", "CSC", "PBP", 'S', ItemList.Cover_Screen, 'R', ItemList.Sensor_EV, 'H', OrePrefixes.toolHeadDrill.get(Materials.Titanium), 'E', ItemList.Emitter_EV, 'C', OrePrefixes.circuit.get(Materials.Data), 'P', OrePrefixes.plate.get(Materials.Titanium), 'B', ItemList.IC2_LapotronCrystal.get(1L)});
+        GT_ModHandler.addCraftingRecipe(scannerEV.copy(), GT_ModHandler.RecipeBits.DISMANTLEABLE | GT_ModHandler.RecipeBits.DO_NOT_CHECK_FOR_COLLISIONS | GT_ModHandler.RecipeBits.BUFFERED, new Object[]{"EHR", "CSC", "PBP", 'S', ItemList.Cover_Screen, 'R', ItemList.Sensor_EV, 'H', OrePrefixes.toolHeadDrill.get(Materials.Titanium), 'E', ItemList.Emitter_EV, 'C', OrePrefixes.circuit.get(Materials.Data), 'P', OrePrefixes.plate.get(Materials.Titanium), 'B', StackUtils.copyWithWildCard(IC2Items.getItem("lapotronCrystal"))});
 
     }
 
