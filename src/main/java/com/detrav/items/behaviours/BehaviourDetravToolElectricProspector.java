@@ -47,10 +47,12 @@ public class BehaviourDetravToolElectricProspector extends BehaviourDetravToolPr
         if (aWorld.isRemote) {
             return aStack;
         }
-        if (!(aPlayer.isSneaking() || aPlayer.capabilities.isCreativeMode || GT_Utility.isWearingFullQuantumArmor(aPlayer))) {
+        /*if (!(aPlayer.isSneaking() || aPlayer.capabilities.isCreativeMode || GT_Utility.isWearingFullQuantumArmor(aPlayer))) {
             aPlayer.addChatMessage(new ChatComponentTranslation("detrav.scanner.QuantumSynchronization.Failed"));
             return aStack;
-        }
+        }*/
+        // todo remove code Kotl
+        // Зависимость сета кванта для открытия гуи сканеров
         if (!aWorld.isRemote && canUse(aItem, aStack)) {
             int data = getMode(aStack);
             if (aPlayer.isSneaking()) {
